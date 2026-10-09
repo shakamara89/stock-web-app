@@ -5,14 +5,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
 
-# Matplotlib 한글 깨짐 방지 설정
-plt.rcParams["font.family"] = "Malgun Gothic"
-plt.rcParams["axes.unicode_minus"] = False
-
-# 페이지 기본 설정
+# 🚨 [중요] st.set_page_config는 반드시 최상단(다른 모든 st 명령어보다 앞)에 위치해야 합니다.
 st.set_page_config(
     page_title="주식 Raw Data & 데이터 박스 시스템", page_layout="wide"
 )
+
+# Matplotlib 한글 깨짐 방지 설정
+plt.rcParams["font.family"] = "Malgun Gothic"
+plt.rcParams["axes.unicode_minus"] = False
 
 
 # 거래소 종목 데이터 로드 (캐싱으로 속도 최적화)
@@ -124,7 +124,6 @@ with col_list:
             )
         ]
 
-    # 종목 선택 멀티 옵션 박스
     display_options = [
         f"[{row.get('Market', 'KRX')}] {row.get('Name')}"
         for _, row in filtered_df.iterrows()
@@ -214,7 +213,7 @@ with col_mid:
 # [우측 영역] Data Box Storage 및 조합 창
 # ------------------------------------------------------------------------------
 with col_right:
-    # [창 3] Data Box Storage (스크롤 보관소)
+    # [창 3] Data Box Storage
     st.subheader("📦 데이터 함수 보관소")
 
     if st.session_state.stock_boxes:
@@ -227,12 +226,10 @@ with col_right:
                 st.session_state.active_box_name = box_k
                 st.rerun()
 
-        # 가이드 & 구조 요약
         if active_df is not None:
             num_cols = active_df.select_dtypes(
                 include=["number"]
             ).columns.tolist()
-            cols_str = " / ".join(num_cols)
             st.caption(
                 f"📊 변수 접근 표현식: `{active_name}(x).{num_cols[0] if num_cols else ''}`"
             )
